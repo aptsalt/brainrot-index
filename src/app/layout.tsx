@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   title: "BrainRot Index | How Cooked Is Your Thinking?",
   description:
     "Drop your tweets, shower thoughts, 3 AM notes, or unhinged ideas. AI scores how cooked your thinking is across 6 dimensions. Powered by Gemini.",
+  icons: {
+    icon: "/favicon.svg",
+  },
   openGraph: {
     title: "BrainRot Index",
     description:

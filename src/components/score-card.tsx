@@ -1,9 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { DIMENSIONS, getRotEmoji, getRotLevel } from "@/lib/dimensions";
 import type { BrainRotScore } from "@/lib/dimensions";
 import { motion } from "motion/react";
 import { Scroll, SparkleIcon, Clock } from "@phosphor-icons/react/dist/ssr";
+import { AnimatedCounter } from "./animated-counter";
+import { playScoreReveal, playHighScore } from "@/lib/sounds";
+import confetti from "canvas-confetti";
 
 const TAROT_SYMBOLS: Record<string, string> = {
   "The Fool": "0", "The Magician": "I", "The High Priestess": "II",
@@ -26,6 +30,27 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
   const rotLevel = getRotLevel(score.overall);
   const rotEmoji = getRotEmoji(score.overall);
   const tarotNumeral = getTarotNumeral(score.tarotCard || "");
+
+  useEffect(() => {
+    // Sound effects
+    if (score.overall >= 80) {
+      playHighScore();
+    } else {
+      playScoreReveal();
+    }
+
+    // Confetti for high scores
+    if (score.overall >= 80) {
+      setTimeout(() => {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.3 },
+          colors: ["#a855f7", "#ec4899", "#f97316", "#22d3ee"],
+        });
+      }, 600);
+    }
+  }, [score.overall]);
 
   return (
     <div className="w-full space-y-3">
@@ -58,7 +83,7 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
                 </div>
               )}
               <div className="text-7xl md:text-8xl font-black tabular-nums comic-bang bg-gradient-to-b from-purple-400 via-purple-500 to-purple-700 bg-clip-text text-transparent">
-                {score.overall}
+                <AnimatedCounter value={score.overall} duration={1500} />
               </div>
             </motion.div>
 
