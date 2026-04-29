@@ -3,6 +3,41 @@
 :root {
   --background: #000000;
   --foreground: #ededed;
+  --panel-bg: #0a0a0a;
+  --panel-border: #333;
+  --panel-shadow: #1a1a1a;
+  --card-bg: rgba(10, 10, 10, 0.9);
+  --muted: #71717a;
+  --muted-strong: #a1a1aa;
+  --bubble-bg: #1a1025;
+  --bubble-border: #444;
+  --bar-bg: #18181b;
+  --input-bg: #0a0a0a;
+  --hot-take-bg: linear-gradient(135deg, #1a0a0a, #0a0a0a, #1a0f0a);
+  --hot-take-text: #f0d0b0;
+  --tarot-bg: linear-gradient(180deg, #0a0015 0%, #1a0030 30%, #0d001a 100%);
+  --tarot-border: #6b21a8;
+  --nav-bg: rgba(0, 0, 0, 0.8);
+}
+
+.light {
+  --background: #faf7f2;
+  --foreground: #1a1a1a;
+  --panel-bg: #ffffff;
+  --panel-border: #d4c8b8;
+  --panel-shadow: #c4b8a8;
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --muted: #78716c;
+  --muted-strong: #57534e;
+  --bubble-bg: #fef9f0;
+  --bubble-border: #d4c8b8;
+  --bar-bg: #e8e0d4;
+  --input-bg: #ffffff;
+  --hot-take-bg: linear-gradient(135deg, #fef2e8, #fff8f0, #fef5eb);
+  --hot-take-text: #7c2d12;
+  --tarot-bg: linear-gradient(180deg, #f5f0ff 0%, #ede4ff 30%, #f8f4ff 100%);
+  --tarot-border: #a78bfa;
+  --nav-bg: rgba(250, 247, 242, 0.9);
 }
 
 @theme inline {
@@ -16,6 +51,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 /* === COMIC BOOK AESTHETIC === */
@@ -33,20 +69,21 @@ body {
 
 /* Comic panel border */
 .comic-panel {
-  border: 3px solid #333;
+  border: 3px solid var(--panel-border);
   border-radius: 12px;
   box-shadow:
-    4px 4px 0px #1a1a1a,
-    inset 0 0 30px rgba(0, 0, 0, 0.3);
+    4px 4px 0px var(--panel-shadow),
+    inset 0 0 30px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
+  background: var(--panel-bg);
 }
 
 .comic-panel::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(128, 128, 128, 0.03) 1px, transparent 1px);
   background-size: 6px 6px;
   pointer-events: none;
 }
@@ -54,11 +91,11 @@ body {
 /* Speech bubble */
 .speech-bubble {
   position: relative;
-  background: linear-gradient(135deg, #1a1025, #0d0d1a);
-  border: 2px solid #444;
+  background: var(--bubble-bg);
+  border: 2px solid var(--bubble-border);
   border-radius: 20px;
   padding: 16px 20px;
-  box-shadow: 3px 3px 0px #111;
+  box-shadow: 3px 3px 0px var(--panel-shadow);
 }
 
 .speech-bubble::after {
@@ -70,7 +107,7 @@ body {
   height: 0;
   border-left: 12px solid transparent;
   border-right: 12px solid transparent;
-  border-top: 14px solid #444;
+  border-top: 14px solid var(--bubble-border);
 }
 
 .speech-bubble::before {
@@ -82,21 +119,21 @@ body {
   height: 0;
   border-left: 11px solid transparent;
   border-right: 11px solid transparent;
-  border-top: 12px solid #1a1025;
+  border-top: 12px solid var(--bubble-bg);
   z-index: 1;
 }
 
 /* Tarot card */
 .tarot-card {
-  background: linear-gradient(180deg, #0a0015 0%, #1a0030 30%, #0d001a 100%);
-  border: 2px solid #6b21a8;
+  background: var(--tarot-bg);
+  border: 2px solid var(--tarot-border);
   border-radius: 16px;
   position: relative;
   overflow: hidden;
   box-shadow:
     0 0 20px rgba(168, 85, 247, 0.15),
     0 0 40px rgba(168, 85, 247, 0.05),
-    4px 4px 0px #1a0030;
+    4px 4px 0px var(--panel-shadow);
 }
 
 .tarot-card::before {
@@ -253,10 +290,41 @@ body {
 
 /* Dimension bar comic style */
 .comic-bar {
-  border: 2px solid #333;
+  border: 2px solid var(--panel-border);
   border-radius: 6px;
-  box-shadow: 2px 2px 0px #111;
+  box-shadow: 2px 2px 0px var(--panel-shadow);
   overflow: hidden;
+}
+
+/* Light mode specific overrides */
+.light .scanlines::after {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.01) 0px,
+    rgba(0, 0, 0, 0.01) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.light .glitch-text {
+  animation: none;
+}
+
+.light .glitch-text:hover {
+  animation: glitch 0.15s infinite;
+}
+
+.light .neon-purple {
+  text-shadow: none;
+}
+
+.light .floating-emoji {
+  filter: none !important;
+}
+
+.light .action-lines {
+  opacity: 0.03;
 }
 
 /* Thought bubble dots */

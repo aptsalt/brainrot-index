@@ -14,7 +14,7 @@ export function Nav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-black/80 backdrop-blur-xl border-t border-zinc-800/50 md:static md:border-t-0 md:border-b md:border-zinc-800/50 md:bg-transparent">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 backdrop-blur-xl border-t md:static md:border-t-0 md:border-b" style={{ background: "var(--nav-bg)", borderColor: "var(--panel-border)" }}>
       <div className="flex items-center justify-center gap-1 px-4 py-2 md:py-3">
         {NAV_ITEMS.map((item) => {
           const active = pathname === item.href;

@@ -134,7 +134,7 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
                 transition={{ delay: 0.4 + i * 0.08 }}
               >
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs text-zinc-400 font-mono font-bold">
+                  <span className="text-xs font-mono font-bold">
                     {dim.emoji} {dim.name}
                   </span>
                   <span
@@ -144,7 +144,7 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
                     {value}/100
                   </span>
                 </div>
-                <div className="comic-bar h-3 bg-zinc-900">
+                <div className="comic-bar h-3 bg-[var(--bar-bg)]">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${value}%` }}
@@ -179,7 +179,7 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
         transition={{ delay: 0.9 }}
       >
         <div className="speech-bubble mx-2">
-          <p className="text-zinc-300 text-sm leading-relaxed font-mono">
+          <p className="text-sm leading-relaxed font-mono" style={{ color: "var(--muted-strong)" }}>
             {score.summary}
           </p>
         </div>
@@ -191,7 +191,8 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
         initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
         animate={{ opacity: 1, scale: 1, rotate: 0 }}
         transition={{ delay: 1.1, type: "spring" }}
-        className="comic-panel bg-gradient-to-br from-red-950/80 via-zinc-950 to-orange-950/60"
+        style={{ background: "var(--hot-take-bg)" }}
+        className="comic-panel"
       >
         <div className="relative z-10 p-5">
           <div className="flex items-center gap-2 mb-3">
@@ -199,7 +200,10 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
               Hot Take
             </div>
           </div>
-          <p className="text-white font-black text-lg leading-snug comic-bang">
+          <p
+            className="font-black text-lg leading-snug"
+            style={{ color: "var(--hot-take-text)" }}
+          >
             &ldquo;{score.hotTake}&rdquo;
           </p>
         </div>

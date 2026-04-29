@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { FloatingEmojis } from "@/components/floating-emojis";
 import { Nav } from "@/components/nav";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,9 +42,9 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-black scanlines">
+      <body className="min-h-full flex flex-col scanlines" style={{ background: "var(--background)" }}>
         <FloatingEmojis />
-        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-black to-black pointer-events-none" />
+        <ThemeToggle />
         <Nav />
         <div className="relative z-10 flex-1">{children}</div>
       </body>
