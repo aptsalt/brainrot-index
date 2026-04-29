@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import type { BrainRotScore } from "@/lib/dimensions";
-import { Loader2 } from "lucide-react";
+import { Loader2, Zap } from "lucide-react";
 
 const INPUT_TYPES = [
-  { id: "tweet", label: "Tweet / Hot Take", emoji: "🐦" },
+  { id: "tweet", label: "Hot Take", emoji: "🐦" },
   { id: "shower_thought", label: "Shower Thought", emoji: "🚿" },
   { id: "late_night_note", label: "3 AM Note", emoji: "🌙" },
   { id: "startup_idea", label: "Startup Idea", emoji: "🚀" },
-  { id: "rant", label: "Rant / Vent", emoji: "🔥" },
-  { id: "random", label: "Unhinged Thought", emoji: "🧠" },
+  { id: "rant", label: "Rant", emoji: "🔥" },
+  { id: "random", label: "Unhinged", emoji: "🧠" },
 ] as const;
 
 const PLACEHOLDERS: Record<string, string> = {
@@ -22,6 +22,15 @@ const PLACEHOLDERS: Record<string, string> = {
   random: "if you rip a hole in a net, there are actually fewer holes than before. this has been destroying me for 3 days straight",
 };
 
+const LOADING_MESSAGES = [
+  "Consulting the oracle...",
+  "Reading your cognitive aura...",
+  "Measuring rot levels...",
+  "Diogenes is judging you...",
+  "Checking your brainrot vitals...",
+  "The tarot cards are shuffling...",
+];
+
 interface InputFormProps {
   onScore: (text: string, inputType: string, score: BrainRotScore) => void;
 }
@@ -30,6 +39,7 @@ export function InputForm({ onScore }: InputFormProps) {
   const [text, setText] = useState("");
   const [inputType, setInputType] = useState("tweet");
   const [loading, setLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async () => {
@@ -40,6 +50,16 @@ export function InputForm({ onScore }: InputFormProps) {
 
     setLoading(true);
     setError("");
+    setLoadingMsg(
+      LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)]
+    );
+
+    // Cycle loading messages
+    const interval = setInterval(() => {
+      setLoadingMsg(
+        LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)]
+      );
+    }, 2000);
 
     try {
       const res = await fetch("/api/score", {
@@ -57,25 +77,26 @@ export function InputForm({ onScore }: InputFormProps) {
       onScore(text, inputType, score);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Gemini couldn't handle it"
+        err instanceof Error ? err.message : "The oracle has failed. Try again."
       );
     } finally {
+      clearInterval(interval);
       setLoading(false);
     }
   };
 
   return (
     <div className="w-full max-w-lg mx-auto space-y-5">
-      {/* Input Type Selector */}
+      {/* Input Type Selector — comic style */}
       <div className="flex flex-wrap gap-2 justify-center">
         {INPUT_TYPES.map((type) => (
           <button
             key={type.id}
             onClick={() => setInputType(type.id)}
-            className={`px-3 py-1.5 rounded-full text-sm transition-all cursor-pointer ${
+            className={`px-3 py-1.5 text-xs font-black uppercase tracking-wider transition-all cursor-pointer border-2 rounded-lg ${
               inputType === type.id
-                ? "bg-purple-600 text-white shadow-lg shadow-purple-500/25"
-                : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200"
+                ? "bg-purple-600 text-white border-purple-400 shadow-[2px_2px_0px_#7c3aed]"
+                : "bg-zinc-900 text-zinc-500 border-zinc-700 hover:border-zinc-500 hover:text-zinc-300 shadow-[2px_2px_0px_#111]"
             }`}
           >
             {type.emoji} {type.label}
@@ -83,38 +104,45 @@ export function InputForm({ onScore }: InputFormProps) {
         ))}
       </div>
 
-      {/* Text Input */}
-      <div className="relative">
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder={PLACEHOLDERS[inputType] || PLACEHOLDERS.random}
-          rows={6}
-          maxLength={5000}
-          className="w-full bg-zinc-900/80 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-600 resize-none focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all pulse-border font-mono text-sm"
-        />
-        <div className="absolute bottom-3 right-3 text-xs text-zinc-600">
-          {text.length}/5000
+      {/* Text Input — comic panel */}
+      <div className="comic-panel bg-zinc-950 p-1">
+        <div className="relative">
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={PLACEHOLDERS[inputType] || PLACEHOLDERS.random}
+            rows={5}
+            maxLength={5000}
+            className="w-full bg-transparent px-4 py-3 text-white placeholder-zinc-700 resize-none focus:outline-none font-mono text-sm leading-relaxed"
+          />
+          <div className="absolute bottom-2 right-3 text-[10px] text-zinc-700 font-mono tabular-nums">
+            {text.length}/5000
+          </div>
         </div>
       </div>
 
       {error && (
-        <p className="text-red-400 text-sm text-center">{error}</p>
+        <div className="speech-bubble mx-4">
+          <p className="text-red-400 text-xs font-mono">{error}</p>
+        </div>
       )}
 
-      {/* Submit */}
+      {/* Submit — big comic button */}
       <button
         onClick={handleSubmit}
         disabled={loading || text.trim().length < 10}
-        className="w-full py-3 rounded-xl font-bold text-lg transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
+        className="w-full py-3.5 font-black text-base uppercase tracking-wider transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed bg-gradient-to-r from-purple-600 to-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 rounded-lg"
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">
             <Loader2 className="w-5 h-5 animate-spin" />
-            Analyzing your rot...
+            <span className="text-sm normal-case">{loadingMsg}</span>
           </span>
         ) : (
-          "Score My BrainRot 🧠"
+          <span className="flex items-center justify-center gap-2">
+            <Zap className="w-5 h-5" />
+            Diagnose My BrainRot
+          </span>
         )}
       </button>
     </div>

@@ -54,9 +54,13 @@ export type DimensionId = (typeof DIMENSIONS)[number]["id"];
 export interface BrainRotScore {
   overall: number;
   dimensions: Record<DimensionId, number>;
-  ropiType: string; // "ROPI" = Rot Personality Index type
+  ropiType: string;
   summary: string;
   hotTake: string;
+  philosopher: string;
+  historicalParallel: string;
+  tarotCard: string;
+  tarotReading: string;
 }
 
 export function getRotLevel(score: number): string {

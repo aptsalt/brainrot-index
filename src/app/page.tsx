@@ -10,22 +10,22 @@ import { motion, AnimatePresence } from "motion/react";
 
 export default function Home() {
   const [score, setScore] = useState<BrainRotScore | null>(null);
-  const [lastText, setLastText] = useState("");
-  const [lastType, setLastType] = useState("");
 
-  const handleScore = (text: string, inputType: string, result: BrainRotScore) => {
+  const handleScore = (
+    text: string,
+    inputType: string,
+    result: BrainRotScore
+  ) => {
     setScore(result);
-    setLastText(text);
-    setLastType(inputType);
     addEntry(text, inputType, result);
   };
 
   return (
-    <main className="relative z-10 flex flex-col items-center px-4 py-8 md:py-16 pb-24 md:pb-16">
-      {/* Marquee banner */}
-      <div className="w-full overflow-hidden mb-6 border-y border-purple-500/20 py-1.5">
-        <div className="marquee whitespace-nowrap text-xs text-purple-400/60 font-mono">
-          BRAINROT DETECTED * COGNITIVE CHAOS LOADING * YOUR THOUGHTS ARE BEING JUDGED * RESISTANCE IS FUTILE * BRAINROT DETECTED * COGNITIVE CHAOS LOADING *
+    <main className="relative z-10 flex flex-col items-center px-4 py-6 md:py-12 pb-24 md:pb-16">
+      {/* Marquee ticker */}
+      <div className="w-full overflow-hidden mb-6 border-y border-purple-500/10 py-1">
+        <div className="marquee whitespace-nowrap text-[10px] text-purple-400/40 font-mono tracking-widest uppercase">
+          BRAINROT DETECTED &bull; COGNITIVE CHAOS LOADING &bull; YOUR THOUGHTS ARE BEING JUDGED &bull; RESISTANCE IS FUTILE &bull; PREPARE FOR DIAGNOSIS &bull; BRAINROT DETECTED &bull; COGNITIVE CHAOS LOADING &bull;
         </div>
       </div>
 
@@ -35,18 +35,29 @@ export default function Home() {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <h1 className="text-5xl md:text-7xl font-black mb-2 glitch-text bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent">
-          BrainRot Index
-        </h1>
-        <p className="text-zinc-500 text-sm font-mono tracking-wider uppercase">
-          [ cognitive chaos quantifier v0.1 ]
+        {/* Comic-style title */}
+        <div className="relative inline-block">
+          <h1 className="text-5xl md:text-7xl font-black glitch-text comic-bang bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent leading-tight">
+            BrainRot
+            <br />
+            <span className="text-4xl md:text-6xl">Index</span>
+          </h1>
+
+          {/* Version badge */}
+          <div className="absolute -top-2 -right-4 md:-right-8 bg-yellow-400 text-black px-2 py-0.5 text-[9px] font-black uppercase rotate-12 border border-black shadow-[2px_2px_0px_#000]">
+            v0.1
+          </div>
+        </div>
+
+        <p className="text-zinc-500 text-xs font-mono mt-3 tracking-wider uppercase">
+          [ cognitive chaos quantifier ]
         </p>
-        <p className="text-zinc-400 text-base md:text-lg max-w-md mx-auto mt-3">
-          Drop your tweets, shower thoughts, 3 AM notes, or unhinged ideas.
-          <br />
-          <span className="text-purple-400/60 text-sm">
-            We score how cooked your thinking is.
-          </span>
+        <p className="text-zinc-400 text-sm max-w-sm mx-auto mt-3 leading-relaxed">
+          Drop your tweets, shower thoughts, 3 AM notes, startup pitches,
+          or unhinged ideas. AI analyzes your cognitive chaos across{" "}
+          <span className="text-purple-400 font-bold">6 dimensions</span> and
+          reads your{" "}
+          <span className="text-pink-400 font-bold">thinking fortune</span>.
         </p>
       </motion.div>
 
@@ -76,20 +87,20 @@ export default function Home() {
 
       {/* Footer */}
       <div className="mt-12 text-center space-y-1">
-        <p className="text-xs text-zinc-600 font-mono">
-          // built on real cognitive science, wrapped in chaos
+        <p className="text-[10px] text-zinc-700 font-mono">
+          // real cognitive science, wrapped in chaos
         </p>
-        <p className="text-xs text-zinc-700">
+        <p className="text-[10px] text-zinc-700">
           The serious version:{" "}
           <a
             href="https://discuria.space"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-purple-500/50 hover:text-purple-400 transition-colors chromatic"
+            className="text-purple-500/40 hover:text-purple-400 transition-colors"
           >
             discuria.space
           </a>{" "}
-          — A GitHub for Thinking
+          &mdash; A GitHub for Thinking
         </p>
       </div>
     </main>

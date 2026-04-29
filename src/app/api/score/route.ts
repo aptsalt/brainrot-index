@@ -16,7 +16,11 @@ You MUST respond with ONLY valid JSON, no markdown, no code fences. The JSON mus
   },
   "ropiType": "<a funny 2-3 word personality type like 'Chaotic Philosopher' or 'Sigma Overthinker'>",
   "summary": "<2-3 sentence roast/analysis of their thinking style, funny but insightful>",
-  "hotTake": "<one savage one-liner about their brainrot level>"
+  "hotTake": "<one savage one-liner about their brainrot level>",
+  "philosopher": "<connect their thought to a real philosopher or thinker — e.g. 'Diogenes would have posted this from his barrel' or 'Nietzsche called, he wants his existential crisis back'. Make it funny but the philosophical connection should be REAL and accurate.>",
+  "historicalParallel": "<connect their thought to a real historical event or moment — e.g. 'This has the same energy as Napoleon crowning himself emperor — maximum delusion, zero committee approval' or 'Archimedes had a similar eureka moment, except his was actually useful'. Must be a REAL historical reference.>",
+  "tarotCard": "<assign a tarot card that matches their vibe — e.g. 'The Fool' or 'The Tower' or 'Seven of Cups'. Use real tarot cards.>",
+  "tarotReading": "<1 sentence tarot-style reading connecting the card to their thought>"
 }
 
 SCORING GUIDE (these map to real cognitive science, but keep the vibe unhinged):
