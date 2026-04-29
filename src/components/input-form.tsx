@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { BrainRotScore } from "@/lib/dimensions";
-import { Loader2, Zap } from "lucide-react";
+import { Lightning, CircleNotch } from "@phosphor-icons/react/dist/ssr";
 
 const INPUT_TYPES = [
   { id: "tweet", label: "Hot Take", emoji: "🐦" },
@@ -113,7 +113,8 @@ export function InputForm({ onScore }: InputFormProps) {
             placeholder={PLACEHOLDERS[inputType] || PLACEHOLDERS.random}
             rows={5}
             maxLength={5000}
-            className="w-full bg-transparent px-4 py-3 text-white placeholder-zinc-700 resize-none focus:outline-none font-mono text-sm leading-relaxed"
+            className="w-full bg-transparent px-4 py-3 resize-none focus:outline-none font-mono text-sm leading-relaxed"
+          style={{ color: "var(--input-text)", }}
           />
           <div className="absolute bottom-2 right-3 text-[10px] text-zinc-700 font-mono tabular-nums">
             {text.length}/5000
@@ -135,12 +136,12 @@ export function InputForm({ onScore }: InputFormProps) {
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin" />
+            <CircleNotch weight="bold" className="w-5 h-5 animate-spin" />
             <span className="text-sm normal-case">{loadingMsg}</span>
           </span>
         ) : (
           <span className="flex items-center justify-center gap-2">
-            <Zap className="w-5 h-5" />
+            <Lightning weight="fill" className="w-5 h-5" />
             Diagnose My BrainRot
           </span>
         )}

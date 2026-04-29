@@ -49,15 +49,15 @@ export default function Home() {
           </div>
         </div>
 
-        <p className="text-zinc-500 text-xs font-mono mt-3 tracking-wider uppercase">
+        <p className="text-xs font-mono mt-3 tracking-wider uppercase" style={{ color: "var(--muted)" }}>
           [ cognitive chaos quantifier ]
         </p>
-        <p className="text-zinc-400 text-sm max-w-sm mx-auto mt-3 leading-relaxed">
+        <p className="text-sm max-w-sm mx-auto mt-3 leading-relaxed" style={{ color: "var(--foreground-dim)" }}>
           Drop your tweets, shower thoughts, 3 AM notes, startup pitches,
           or unhinged ideas. AI analyzes your cognitive chaos across{" "}
-          <span className="text-purple-400 font-bold">6 dimensions</span> and
+          <span className="text-purple-500 font-bold">6 dimensions</span> and
           reads your{" "}
-          <span className="text-pink-400 font-bold">thinking fortune</span>.
+          <span className="text-pink-500 font-bold">thinking fortune</span>.
         </p>
       </motion.div>
 
@@ -87,16 +87,17 @@ export default function Home() {
 
       {/* Footer */}
       <div className="mt-12 text-center space-y-1">
-        <p className="text-[10px] text-zinc-700 font-mono">
+        <p className="text-[10px] font-mono" style={{ color: "var(--muted)" }}>
           // real cognitive science, wrapped in chaos
         </p>
-        <p className="text-[10px] text-zinc-700">
+        <p className="text-[10px]" style={{ color: "var(--muted)" }}>
           The serious version:{" "}
           <a
             href="https://discuria.space"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-purple-500/40 hover:text-purple-400 transition-colors"
+            className="transition-colors"
+            style={{ color: "var(--link-color)" }}
           >
             discuria.space
           </a>{" "}

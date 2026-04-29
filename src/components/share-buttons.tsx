@@ -2,7 +2,7 @@
 
 import { DIMENSIONS, getRotEmoji, getRotLevel } from "@/lib/dimensions";
 import type { BrainRotScore } from "@/lib/dimensions";
-import { Copy, Share2, RotateCcw } from "lucide-react";
+import { CopySimple, ShareNetwork, ArrowCounterClockwise } from "@phosphor-icons/react/dist/ssr";
 import { useState } from "react";
 
 function generateShareText(score: BrainRotScore): string {
@@ -56,14 +56,14 @@ export function ShareButtons({ score, onReset }: ShareButtonsProps) {
           onClick={handleCopy}
           className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-zinc-900 border-2 border-zinc-700 text-zinc-200 text-sm font-black transition-all cursor-pointer shadow-[3px_3px_0px_#1a1a1a] hover:shadow-[1px_1px_0px_#1a1a1a] hover:translate-x-0.5 hover:translate-y-0.5 rounded-lg"
         >
-          <Copy className="w-4 h-4" />
+          <CopySimple weight="bold" className="w-4 h-4" />
           {copied ? "Copied!" : "Copy Card"}
         </button>
         <button
           onClick={handleTwitter}
           className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-zinc-900 border-2 border-zinc-700 text-zinc-200 text-sm font-black transition-all cursor-pointer shadow-[3px_3px_0px_#1a1a1a] hover:shadow-[1px_1px_0px_#1a1a1a] hover:translate-x-0.5 hover:translate-y-0.5 rounded-lg"
         >
-          <Share2 className="w-4 h-4" />
+          <ShareNetwork weight="bold" className="w-4 h-4" />
           Share on X
         </button>
       </div>
@@ -71,7 +71,7 @@ export function ShareButtons({ score, onReset }: ShareButtonsProps) {
         onClick={onReset}
         className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-purple-600 to-pink-600 border-2 border-black text-white text-sm font-black transition-all cursor-pointer shadow-[3px_3px_0px_#000] hover:shadow-[1px_1px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 rounded-lg"
       >
-        <RotateCcw className="w-4 h-4" />
+        <ArrowCounterClockwise weight="bold" className="w-4 h-4" />
         Score Another Thought
       </button>
     </div>
