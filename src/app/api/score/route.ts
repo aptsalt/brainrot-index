@@ -1,7 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 const SYSTEM_PROMPT = `You are the BrainRot Index Analyzer. You score human thoughts, tweets, shower ideas, notes, and hot takes across 6 cognitive dimensions — but with unhinged Gen Z branding.
 
@@ -48,6 +45,66 @@ The input types you'll receive:
 
 Score authentically. A boring corporate take should score low on everything. A 3 AM thought spiral about whether fish know they're wet should score high.`;
 
+async function scoreWithGemini(text: string, inputType: string) {
+  const { GoogleGenerativeAI } = await import("@google/generative-ai");
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+  const prompt = `[INPUT TYPE: ${inputType || "unknown"}]\n\n${text}`;
+
+  const result = await model.generateContent({
+    contents: [
+      { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
+      { role: "model", parts: [{ text: "Ready to analyze brainrot. Send me the thoughts." }] },
+      { role: "user", parts: [{ text: prompt }] },
+    ],
+    generationConfig: {
+      temperature: 1.0,
+      topP: 0.95,
+      maxOutputTokens: 1024,
+    },
+  });
+
+  return result.response.text().trim();
+}
+
+async function scoreWithOllama(text: string, inputType: string) {
+  const ollamaUrl = process.env.OLLAMA_URL || "http://localhost:11434";
+  const ollamaModel = process.env.OLLAMA_MODEL || "qwen3:latest";
+
+  const prompt = `${SYSTEM_PROMPT}\n\n[INPUT TYPE: ${inputType || "unknown"}]\n\n${text}`;
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 120000);
+
+  try {
+    const res = await fetch(`${ollamaUrl}/api/generate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: ollamaModel,
+        prompt,
+        stream: false,
+        options: {
+          temperature: 0.9,
+          num_predict: 1024,
+        },
+      }),
+      signal: controller.signal,
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Ollama error ${res.status}: ${errText}`);
+    }
+
+    const data = await res.json();
+    return data.response;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { text, inputType } = await req.json();
@@ -66,32 +123,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const useGemini = !!process.env.GEMINI_API_KEY;
 
-    const prompt = `[INPUT TYPE: ${inputType || "unknown"}]\n\n${text}`;
+    const responseText = useGemini
+      ? await scoreWithGemini(text, inputType)
+      : await scoreWithOllama(text, inputType);
 
-    const result = await model.generateContent({
-      contents: [
-        { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
-        { role: "model", parts: [{ text: "Ready to analyze brainrot. Send me the thoughts." }] },
-        { role: "user", parts: [{ text: prompt }] },
-      ],
-      generationConfig: {
-        temperature: 1.0,
-        topP: 0.95,
-        maxOutputTokens: 1024,
-      },
-    });
-
-    const responseText = result.response.text().trim();
     const cleaned = responseText.replace(/```json\n?|\n?```/g, "").trim();
-    const score = JSON.parse(cleaned);
+    // Extract JSON from response (handle models that add text before/after)
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error("No JSON found in response");
+    }
+    const score = JSON.parse(jsonMatch[0]);
 
     return NextResponse.json(score);
-  } catch (error) {
-    console.error("Scoring error:", error);
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
+    console.error("Scoring error:", errMsg);
+    const provider = process.env.GEMINI_API_KEY ? "Gemini" : "Ollama";
     return NextResponse.json(
-      { error: "Gemini couldn't handle that level of brainrot. Try again." },
+      { error: `${provider} couldn't handle that level of brainrot. Try again.` },
       { status: 500 }
     );
   }
