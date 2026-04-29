@@ -23,7 +23,7 @@ const PLACEHOLDERS: Record<string, string> = {
 };
 
 interface InputFormProps {
-  onScore: (score: BrainRotScore) => void;
+  onScore: (text: string, inputType: string, score: BrainRotScore) => void;
 }
 
 export function InputForm({ onScore }: InputFormProps) {
@@ -54,7 +54,7 @@ export function InputForm({ onScore }: InputFormProps) {
       }
 
       const score = await res.json();
-      onScore(score);
+      onScore(text, inputType, score);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Gemini couldn't handle it"
@@ -91,7 +91,7 @@ export function InputForm({ onScore }: InputFormProps) {
           placeholder={PLACEHOLDERS[inputType] || PLACEHOLDERS.random}
           rows={6}
           maxLength={5000}
-          className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-600 resize-none focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
+          className="w-full bg-zinc-900/80 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-600 resize-none focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all pulse-border font-mono text-sm"
         />
         <div className="absolute bottom-3 right-3 text-xs text-zinc-600">
           {text.length}/5000
