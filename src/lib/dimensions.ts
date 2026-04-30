@@ -61,6 +61,7 @@ export interface BrainRotScore {
   historicalParallel: string;
   tarotCard: string;
   tarotReading: string;
+  _provider?: string;
 }
 
 export function getRotLevel(score: number): string {

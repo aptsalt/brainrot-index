@@ -74,7 +74,7 @@ async function scoreWithGemini(text: string, inputType: string) {
 
 async function scoreWithOllama(text: string, inputType: string) {
   const ollamaUrl = process.env.OLLAMA_URL || "http://localhost:11434";
-  const ollamaModel = process.env.OLLAMA_MODEL || "qwen3:latest";
+  const ollamaModel = process.env.OLLAMA_MODEL || "gemma3:12b";
 
   const prompt = `${SYSTEM_PROMPT}\n\n[INPUT TYPE: ${inputType || "unknown"}]\n\n${text}`;
 
@@ -140,6 +140,7 @@ export async function POST(req: NextRequest) {
       throw new Error("No JSON found in response");
     }
     const score = JSON.parse(jsonMatch[0]);
+    score._provider = useGemini ? "gemini" : "gemma";
 
     return NextResponse.json(score);
   } catch (error: unknown) {
