@@ -23,8 +23,8 @@ export default function Home() {
   return (
     <main className="relative z-10 flex flex-col items-center px-4 py-4 md:py-8 pb-24 md:pb-16">
       {/* Marquee ticker */}
-      <div className="w-full overflow-hidden mb-4 border-y border-purple-500/10 py-1">
-        <div className="marquee whitespace-nowrap text-[10px] text-purple-400/40 font-mono tracking-widest uppercase">
+      <div className="w-full overflow-hidden mb-4 border-y py-1.5" style={{ borderColor: "var(--marquee-border)", background: "var(--marquee-bg)" }}>
+        <div className="marquee whitespace-nowrap text-xs font-mono tracking-widest uppercase font-bold" style={{ color: "var(--marquee-text)" }}>
           BRAINROT DETECTED &bull; COGNITIVE CHAOS LOADING &bull; YOUR THOUGHTS ARE BEING JUDGED &bull; RESISTANCE IS FUTILE &bull; PREPARE FOR DIAGNOSIS &bull; BRAINROT DETECTED &bull; COGNITIVE CHAOS LOADING &bull;
         </div>
       </div>

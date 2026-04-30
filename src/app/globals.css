@@ -36,6 +36,9 @@
   --historian-label: #22d3ee;
   --link-color: rgba(168, 85, 247, 0.5);
   --link-hover: #a855f7;
+  --marquee-text: #a855f7;
+  --marquee-border: rgba(168, 85, 247, 0.3);
+  --marquee-bg: rgba(168, 85, 247, 0.05);
 }
 
 .light {
@@ -74,6 +77,9 @@
   --historian-label: #0e7490;
   --link-color: #7c3aed;
   --link-hover: #6d28d9;
+  --marquee-text: #7c3aed;
+  --marquee-border: rgba(124, 58, 237, 0.25);
+  --marquee-bg: rgba(124, 58, 237, 0.06);
 }
 
 @theme inline {
