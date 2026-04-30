@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { BrainRotScore } from "@/lib/dimensions";
 import { Lightning } from "@phosphor-icons/react/dist/ssr";
 import { LoadingBrain } from "./loading-brain";
@@ -82,6 +82,35 @@ export function InputForm({ onScore }: InputFormProps) {
     setInputType(example.type);
     handleSubmit(example.text, example.type);
   };
+
+  // Easter eggs
+  const checkEasterEgg = useCallback((input: string): string | null => {
+    const lower = input.toLowerCase().trim();
+    if (lower === "hello" || lower === "hi") return "That's it? That's the whole thought? Even NPCs have more dialogue.";
+    if (lower.includes("bee movie") || lower.length > 4000) return "You absolute legend. You actually did it.";
+    if (lower === "42") return "Douglas Adams called. He wants his answer back.";
+    if (lower.includes("i am become death")) return "Oppenheimer scored 100/100 on main character energy with this one.";
+    return null;
+  }, []);
+
+  // Cmd/Ctrl+Enter keyboard shortcut
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        if (text.trim().length >= 10 && !loading) {
+          const egg = checkEasterEgg(text);
+          if (egg) {
+            setError(egg);
+          } else {
+            handleSubmit();
+          }
+        }
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [text, loading, checkEasterEgg]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return <LoadingBrain />;

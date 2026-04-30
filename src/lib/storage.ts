@@ -50,6 +50,20 @@ export function clearHistory() {
   localStorage.removeItem(STORAGE_KEY);
 }
 
+export function getPercentile(score: number): number {
+  const entries = getEntries();
+  if (entries.length < 2) return 50;
+  const below = entries.filter((e) => e.score.overall < score).length;
+  return Math.round((below / entries.length) * 100);
+}
+
+export function getScoreHistory(): number[] {
+  return getEntries()
+    .slice(0, 20)
+    .reverse()
+    .map((e) => e.score.overall);
+}
+
 // Leaderboard categories
 export interface LeaderboardCategory {
   id: string;

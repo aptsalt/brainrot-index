@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { DIMENSIONS, getRotEmoji, getRotLevel } from "@/lib/dimensions";
 import type { BrainRotScore } from "@/lib/dimensions";
-import { motion } from "motion/react";
-import { Scroll, SparkleIcon, Clock } from "@phosphor-icons/react/dist/ssr";
+import { motion, AnimatePresence } from "motion/react";
+import { Scroll, SparkleIcon, Clock, Info } from "@phosphor-icons/react/dist/ssr";
 import { AnimatedCounter } from "./animated-counter";
+import { Typewriter } from "./typewriter";
 import { playScoreReveal, playHighScore } from "@/lib/sounds";
+import { getPercentile } from "@/lib/storage";
 import confetti from "canvas-confetti";
 
 const TAROT_SYMBOLS: Record<string, string> = {
@@ -30,17 +32,14 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
   const rotLevel = getRotLevel(score.overall);
   const rotEmoji = getRotEmoji(score.overall);
   const tarotNumeral = getTarotNumeral(score.tarotCard || "");
+  const [percentile, setPercentile] = useState(50);
+  const [activeDim, setActiveDim] = useState<string | null>(null);
 
   useEffect(() => {
-    // Sound effects
+    setPercentile(getPercentile(score.overall));
+
     if (score.overall >= 80) {
       playHighScore();
-    } else {
-      playScoreReveal();
-    }
-
-    // Confetti for high scores
-    if (score.overall >= 80) {
       setTimeout(() => {
         confetti({
           particleCount: 100,
@@ -49,12 +48,14 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
           colors: ["#a855f7", "#ec4899", "#f97316", "#22d3ee"],
         });
       }, 600);
+    } else {
+      playScoreReveal();
     }
   }, [score.overall]);
 
   return (
     <div className="w-full space-y-3">
-      {/* === ROW 1: Score + Dimensions side by side on desktop === */}
+      {/* === ROW 1: Score + Dimensions === */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/* LEFT: Big score */}
         <motion.div
@@ -96,18 +97,25 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
 
             <div
               className="mt-2 inline-block px-3 py-1 rounded-full text-xs font-black"
-              style={{
-                background: "var(--badge-bg)",
-                border: "1px solid var(--badge-border)",
-                color: "var(--badge-text)",
-              }}
+              style={{ background: "var(--badge-bg)", border: "1px solid var(--badge-border)", color: "var(--badge-text)" }}
             >
               {score.ropiType}
             </div>
+
+            {/* Percentile */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.8 }}
+              className="mt-2 text-[10px] font-mono"
+              style={{ color: "var(--muted)" }}
+            >
+              More cooked than {percentile}% of thoughts scored
+            </motion.div>
           </div>
         </motion.div>
 
-        {/* RIGHT: Dimension bars */}
+        {/* RIGHT: Dimension bars with tooltips */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -119,10 +127,14 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
               <div className="bg-yellow-400 text-black px-2 py-0.5 text-[9px] font-black uppercase tracking-wider border border-black shadow-[2px_2px_0px_#000]">
                 Stats
               </div>
+              <span className="text-[9px] font-mono" style={{ color: "var(--muted)" }}>
+                tap for details
+              </span>
             </div>
 
             {DIMENSIONS.map((dim, i) => {
               const value = score.dimensions[dim.id];
+              const isActive = activeDim === dim.id;
               return (
                 <motion.div
                   key={dim.id}
@@ -130,26 +142,50 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 + i * 0.05 }}
                 >
-                  <div className="flex justify-between items-center mb-0.5">
-                    <span className="text-[11px] font-mono font-bold" style={{ color: "var(--label-text)" }}>
-                      {dim.emoji} {dim.name}
-                    </span>
-                    <span className="text-[11px] font-black tabular-nums font-mono" style={{ color: dim.color }}>
-                      {value}
-                    </span>
-                  </div>
-                  <div className="comic-bar h-2" style={{ background: "var(--bar-bg)" }}>
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${value}%` }}
-                      transition={{ delay: 0.4 + i * 0.05, duration: 0.5, ease: "easeOut" }}
-                      className="h-full"
-                      style={{
-                        backgroundColor: dim.color,
-                        backgroundImage: `repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0,0,0,0.12) 6px, rgba(0,0,0,0.12) 8px)`,
-                      }}
-                    />
-                  </div>
+                  <button
+                    onClick={() => setActiveDim(isActive ? null : dim.id)}
+                    className="w-full text-left cursor-pointer"
+                  >
+                    <div className="flex justify-between items-center mb-0.5">
+                      <span className="text-[11px] font-mono font-bold flex items-center gap-1" style={{ color: "var(--label-text)" }}>
+                        {dim.emoji} {dim.name}
+                        <Info weight="regular" className="w-3 h-3 opacity-40" />
+                      </span>
+                      <span className="text-[11px] font-black tabular-nums font-mono" style={{ color: dim.color }}>
+                        {value}
+                      </span>
+                    </div>
+                    <div className="comic-bar h-2" style={{ background: "var(--bar-bg)" }}>
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${value}%` }}
+                        transition={{ delay: 0.4 + i * 0.05, duration: 0.5, ease: "easeOut" }}
+                        className="h-full"
+                        style={{
+                          backgroundColor: dim.color,
+                          backgroundImage: `repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0,0,0,0.12) 6px, rgba(0,0,0,0.12) 8px)`,
+                        }}
+                      />
+                    </div>
+                  </button>
+                  {/* Tooltip */}
+                  <AnimatePresence>
+                    {isActive && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="text-[10px] font-mono py-1.5 px-1 space-y-0.5" style={{ color: "var(--muted)" }}>
+                          <p>{dim.description}</p>
+                          <p style={{ color: "var(--foreground-dim)" }}>
+                            Real science: maps to <strong>{dim.realDimension}</strong> in cognitive scoring
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               );
             })}
@@ -157,9 +193,8 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
         </motion.div>
       </div>
 
-      {/* === ROW 2: Roast + Hot Take side by side === */}
+      {/* === ROW 2: Roast (typewriter) + Hot Take (typewriter) === */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {/* Roast */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -167,12 +202,11 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
         >
           <div className="speech-bubble h-full">
             <p className="text-sm leading-relaxed font-mono" style={{ color: "var(--foreground)" }}>
-              {score.summary}
+              <Typewriter text={score.summary} speed={20} delay={800} />
             </p>
           </div>
         </motion.div>
 
-        {/* Hot Take */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -187,15 +221,14 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
               </div>
             </div>
             <p className="font-black text-base leading-snug" style={{ color: "var(--hot-take-text)" }}>
-              &ldquo;{score.hotTake}&rdquo;
+              &ldquo;<Typewriter text={score.hotTake} speed={30} delay={1500} />&rdquo;
             </p>
           </div>
         </motion.div>
       </div>
 
-      {/* === ROW 3: Tarot + Philosopher + History — 3 columns on desktop === */}
+      {/* === ROW 3: Tarot + Philosopher + History === */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {/* Tarot */}
         {score.tarotCard && (
           <motion.div
             initial={{ opacity: 0, rotateY: 90 }}
@@ -219,7 +252,6 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
           </motion.div>
         )}
 
-        {/* Philosopher */}
         {score.philosopher && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -241,7 +273,6 @@ export function ScoreCard({ score }: { score: BrainRotScore }) {
           </motion.div>
         )}
 
-        {/* Historical */}
         {score.historicalParallel && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}

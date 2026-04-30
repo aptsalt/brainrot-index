@@ -8,7 +8,7 @@ import {
 } from "@/lib/storage";
 import { getRotEmoji, getRotLevel } from "@/lib/dimensions";
 import { motion } from "motion/react";
-import { Trophy } from "lucide-react";
+import { Trophy } from "@phosphor-icons/react/dist/ssr";
 
 const RANK_STYLES = [
   "text-yellow-400 text-2xl", // 1st
@@ -70,7 +70,7 @@ export default function LeaderboardPage() {
       {/* Entries */}
       {entries.length === 0 ? (
         <div className="text-center py-16">
-          <Trophy className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
+          <Trophy weight="duotone" className="w-12 h-12 mx-auto mb-4" style={{ color: "var(--muted)" }} />
           <p className="text-zinc-500 text-lg mb-2">No entries yet</p>
           <p className="text-zinc-600 text-sm">
             Go score some thoughts to fill the leaderboard

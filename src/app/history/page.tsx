@@ -1,19 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getHistory, getPatterns, clearHistory, type StoredEntry } from "@/lib/storage";
+import { getHistory, getPatterns, getScoreHistory, clearHistory, type StoredEntry } from "@/lib/storage";
 import { DIMENSIONS, getRotEmoji, getRotLevel } from "@/lib/dimensions";
 import { motion } from "motion/react";
-import { Trash2, Brain, TrendingUp, Zap } from "lucide-react";
+import { Trash, Brain, TrendUp, Lightning } from "@phosphor-icons/react/dist/ssr";
+import { Sparkline } from "@/components/sparkline";
 
 export default function HistoryPage() {
   const [entries, setEntries] = useState<StoredEntry[]>([]);
   const [patterns, setPatterns] = useState(getPatterns());
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
+  const [sparkData, setSparkData] = useState<number[]>([]);
+
   useEffect(() => {
     setEntries(getHistory());
     setPatterns(getPatterns());
+    setSparkData(getScoreHistory());
   }, []);
 
   const handleClear = () => {
@@ -44,11 +48,15 @@ export default function HistoryPage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-full bg-zinc-900/80 border border-zinc-800 rounded-2xl p-5 mb-8"
+          className="w-full comic-panel p-5 mb-8"
         >
-          <h2 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Brain className="w-4 h-4" /> Your Rot Pattern
-          </h2>
+          <div className="relative z-10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2" style={{ color: "var(--muted-strong)" }}>
+              <Brain weight="duotone" className="w-4 h-4" /> Your Rot Pattern
+            </h2>
+            {sparkData.length >= 2 && <Sparkline values={sparkData} />}
+          </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <div className="text-center">
@@ -87,7 +95,7 @@ export default function HistoryPage() {
 
           {patterns.ropiTypes.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-3">
-              <Zap className="w-3 h-3 text-zinc-600 mt-1" />
+              <Lightning weight="fill" className="w-3 h-3 mt-1" style={{ color: "var(--muted)" }} />
               {patterns.ropiTypes.map((type) => (
                 <span
                   key={type}
@@ -98,13 +106,14 @@ export default function HistoryPage() {
               ))}
             </div>
           )}
+          </div>
         </motion.div>
       )}
 
       {/* History list */}
       {entries.length === 0 ? (
         <div className="text-center py-16">
-          <TrendingUp className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
+          <TrendUp weight="duotone" className="w-12 h-12 mx-auto mb-4" style={{ color: "var(--muted)" }} />
           <p className="text-zinc-500 text-lg mb-2">No history yet</p>
           <p className="text-zinc-600 text-sm">
             Score some thoughts and they&apos;ll appear here
@@ -120,7 +129,7 @@ export default function HistoryPage() {
               onClick={handleClear}
               className="flex items-center gap-1.5 text-xs text-zinc-600 hover:text-red-400 transition-colors cursor-pointer"
             >
-              <Trash2 className="w-3 h-3" />
+              <Trash weight="bold" className="w-3 h-3" />
               Clear All
             </button>
           </div>
